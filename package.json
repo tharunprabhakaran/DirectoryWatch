@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/tharunprabhakaran/DirectoryWatch/issues"
   },
-  "homepage": "https://github.com/tharunprabhakaran/DirectoryWatch#readme"
+  "homepage": "https://github.com/tharunprabhakaran/DirectoryWatch#readme",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "directory-tree": "^2.2.5",
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "string-searching": "^0.1.4"
+  }
 }
