@@ -1,0 +1,19 @@
+{
+  "name": "directorywatch",
+  "version": "1.0.0",
+  "description": "Directory watch service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tharunprabhakaran:Grove4life%40@github.com/tharunprabhakaran/DirectoryWatch.git"
+  },
+  "author": "tharun_p",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tharunprabhakaran/DirectoryWatch/issues"
+  },
+  "homepage": "https://github.com/tharunprabhakaran/DirectoryWatch#readme"
+}
