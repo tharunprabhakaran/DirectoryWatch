@@ -43,14 +43,14 @@ Content-type: Application/Json
 ### 1. Global Constant
 ```json
 {
-        "type": ""String",
+        "type": "String",
         "directory": "String",
         "magicString": "String",
         "lastrun": "String",
-        "lastUpdated": Number,
+        "lastUpdated": "Number",
         "lastModifiedTime": "String",
         "_id": "String",
-        "frequency": Number
+        "frequency": "Number"
     }
 ```
 
@@ -59,11 +59,11 @@ Content-type: Application/Json
  {
         "directory": "String",
         "magicString": "String",
-        "timeStamp": Number,
+        "timeStamp": "Number",
         "addedFiles": "Array",
         "deleteFiled": [],
         "currentFiles": [],
-        "magicStringcount": Number,
+        "magicStringcount": "Number",
         "status": "String",
         "type": "String",
         "_id": "String"
