@@ -1,6 +1,6 @@
 /**
- * @name FetchWatchAPI
- * @description Retrives DirectoryWatch reports
+ * @name FetchGlobalConstantsAPI
+ * @description Retrives Global Constants reports
  * @param {Request} Request
  * @param {Response} Respone
  * @param {nedb} DB
@@ -11,15 +11,15 @@
 /* Import */
 var DatabaseUtils = require('../../utils/DB/DB')
 
-let FetchWatchAPI = async function (Request, Response, DB) {
+let FetchGlobalConstantsAPI = async function (Request, Response, DB) {
 
     try {
-        let queryCriteria = Request.query
-        let queryResponse =  await DB.fetchDirectoryWatch(queryCriteria, DB.db)
+        
+        let queryResponse =  await DatabaseUtils.fetchGlobalConstants()
 
         /* Handle Database error */
         if (queryResponse.error) {
-            throw { "error": queryResponse.error, "errorCode": "FW1001", "description": "Error in Database fetch", "type": "DirectoryWatchInternalError"}
+            throw { "error": queryResponse.error, "errorCode": "FGC1001", "description": "Error in Database fetch", "type": "GlobalConstantInternalError"}
         }
 
         /* Send Response */
@@ -27,7 +27,7 @@ let FetchWatchAPI = async function (Request, Response, DB) {
 
     } catch (error) {
         console.log(error)
-        if(error.type == "DirectoryWatchInternal"){
+        if(error.type == "GlobalConstantInternalError"){
             Response.statusCode = 500
             Response.json(error)
         }else{
@@ -42,4 +42,4 @@ let FetchWatchAPI = async function (Request, Response, DB) {
 }
 
 /* Export */
-module.exports = FetchWatchAPI
+module.exports = FetchGlobalConstantsAPI

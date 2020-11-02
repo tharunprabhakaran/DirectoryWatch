@@ -18,6 +18,8 @@
   "homepage": "https://github.com/tharunprabhakaran/DirectoryWatch#readme",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "cron": "^1.8.2",
+    "cron-time-generator": "^1.0.7",
     "directory-tree": "^2.2.5",
     "express": "^4.17.1",
     "nedb": "^1.8.0",

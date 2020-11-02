@@ -7,12 +7,24 @@
 
 /* Imports */
 var express = require("express")
+var DatabaseUtils = require('./utils/DB/DB')
+var cron = require('./utils/CronJob/Cronjob')
+
+/* Modules Import */
+let FetchWatchAPI = require('./api/fetchWatchAPI/fetchWatchAPI')
+let fetchGlobalConstantsAPI = require('./api/fetchGlobalConstantsAPI/fetchGlobalConstantsAPI')
+let updateGlobalConstantsAPI = require('./api/modifyGlobalConstantsAPI/modifyGlobalConstantsAPI')
+
 
 /* Initialisation */
 var app = express()
 const PORT = process.env.PORT || 4000
 
+/* Initiate Cron Job for Every 1 min */
+cron.newjob(1)
+
 /* Middlewares */
+app.use(express.json())
 
 /* Server Startup */
 app.listen(PORT, ()=>{
@@ -28,17 +40,27 @@ app.listen(PORT, ()=>{
  * @returns JSON
  */
 app.get('/Watch', (Request, Response) => {
-    Response.json("Fetch Watch API")
+    var FetchWatchCall = FetchWatchAPI(Request, Response, DatabaseUtils)
 })
 
 /**
- * @name Modify Watch Batch
+ * @name Modify Global Constants
  * @description used to Modify the watch batch parameters
  * @argument Modify Parameters
  * @return JSON
  */
-app.put('/Watch', (Request, Response) => {
-    Response.json("Modify Watch API")
+app.put('/constants', (Request, Response) => {
+   var updateGlobalConstantsAPIResponse =  updateGlobalConstantsAPI(Request, Response, DatabaseUtils)
+})
+
+/**
+ * @name Fetch Global Constants
+ * @description Retrives global constants
+ * @argument Modify Parameters
+ * @return JSON
+ */
+app.get('/constants', (Request, Response) => {
+    var fetchGlobalConstantsAPIResponse = fetchGlobalConstantsAPI(Request, Response, DatabaseUtils)
 })
 
 

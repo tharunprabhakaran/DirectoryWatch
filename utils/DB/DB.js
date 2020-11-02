@@ -6,11 +6,10 @@
  */
 
 /* Import */
-const { query } = require('express');
 var Datastore = require('nedb')
 
 /* Initilisation */
-db = new Datastore({ filename: 'DirectoryWatch.nedb', autoload: true });
+var db = new Datastore({ filename: __dirname + '/DirectoryWatch.nedb', autoload: true });
 
 
 /**
@@ -22,26 +21,66 @@ db = new Datastore({ filename: 'DirectoryWatch.nedb', autoload: true });
  * @see DB Schema in DBSchema.json
  * @author tharun_p
  */
-var fetchDirectoryWatch = function (query, db) {
+var fetchDirectoryWatch = function (query, DB) {
 
     /* Entrich Query with the Type */
-    query["type"]="directoryWatch"
+    query["type"] = "directoryWatch"
 
     /* Query Database */
-    db.find(query, function (err, docs) {
+    return new Promise((resolve, reject) => {
 
-        /* Handle Database Error */
-        if (err) {
-            return {
-                "error": err,
-                "data": null
+        DB.find(query, function (err, docs) {
+
+            /* Handle Database Error */
+            if (err) {
+                resolve({
+                    "error": err,
+                    "data": null
+                })
             }
-        }
-        return {
-            "error": null,
-            "data": docs
-        }
-    });
+            resolve({
+                "error": null,
+                "data": docs
+            })
+
+        });
+    })
+}
+
+
+/**
+ * @name Fetch Global Constant
+ * @description Fetch DirectoryWatch history 
+ * @param {Object} query
+ * @param {nedb} db
+ * @returns {Object}
+ * @see DB Schema in DBSchema.json
+ * @author tharun_p
+ */
+var fetchGlobalConstants = function () {
+
+    /* Generate Query with the Type */
+    var query = { "type": "globalConstants" }
+
+    /* Query Database */
+    return new Promise((resolve, reject) => {
+
+        db.find(query, function (err, docs) {
+
+            /* Handle Database Error */
+            if (err) {
+                resolve({
+                    "error": err,
+                    "data": null
+                })
+            }
+            resolve({
+                "error": null,
+                "data": docs
+            })
+
+        });
+    })
 }
 
 /**
@@ -53,34 +92,38 @@ var fetchDirectoryWatch = function (query, db) {
  * @see DB Schema in DBSchema.json
  * @author tharun_p
  */
-var updateGlobalConstants = function (updatedConstants, db) {
+var updateGlobalConstants = function (updatedConstants) {
 
-    /* Update Database */
-    db.update({ "type": 'globalConstants' }, { $set: updatedConstants }, { multi: true }, function (err, numReplaced) {
+    return new Promise((resolve, reject) => {
+        /* Update Database */
+        db.update({ "type": 'globalConstants' }, { $set: updatedConstants }, { multi: true }, function (err, numReplaced) {
 
-        /* Handle Database Error */
-        if (err) {
-            return {
-                "error": err,
-                "data": null
+            /* Handle Database Error */
+            if (err) {
+                resolve({
+                    "error": err,
+                    "data": null
+                })
             }
-        }
 
-        /* Handle No Record Updated Error */
-        if (numReplaced < 1) {
-            return {
-                "error": { "error": "No Records Updates" },
-                "data": null
+            /* Handle No Record Updated Error */
+            if (numReplaced < 1) {
+
+                resolve({
+                    "error": { "error": "No Records Updates" },
+                    "data": null
+                })
             }
-        }
 
-        /* Retrun Success Respone */
-        return {
-            "error": null,
-            "data": numReplaced
-        }
+            /* Retrun Success Respone */
+            resolve({
+                "error": null,
+                "data": numReplaced
+            })
 
-    });
+        });
+    })
+
 }
 
 /**
@@ -93,29 +136,32 @@ var updateGlobalConstants = function (updatedConstants, db) {
  * @author tharun_p
  */
 
-var createDirectoryWatch = function (data, db) {
+var createDirectoryWatch = function (data, DB) {
 
     /* Enrich Data with Type and TimeStamp */
     data["type"] = "directoryWatch"
     data["timeStamp"] = Date.now()
 
-    /* Insert Database */
-    db.insert(data, function (err, newDoc) {
+    return new Promise((resolve, reject) => {
 
-        /* Handle Database Error */
-        if (err) {
-            return {
-                "error": err,
-                "data": null
+        /* Insert Database */
+        DB.insert(data, function (err, newDoc) {
+
+            /* Handle Database Error */
+            if (err) {
+                resolve({
+                    "error": err,
+                    "data": null
+                })
             }
-        }
-        else {
-            return {
-                "error": null,
-                "data": newDoc
+            else {
+                resolve({
+                    "error": null,
+                    "data": newDoc
+                })
             }
-        }
-    });
+        });
+    })
 }
 
 var createGlobalConstants = function (db) {
@@ -124,27 +170,84 @@ var createGlobalConstants = function (db) {
         "type": "globalConstants",
         "directory": "/",
         "magicString": "tharun",
-        "lastrun": "last1",
-        "lastModifiedTime": "modifiedTime"
+        "lastUpdate": null,
+        "frequency": 1,
+        "lastModifiedTime": null
     }
 
     /* Query Database */
-    db.insert(doc, function (err, newDoc) { });
+    return new Promise((resolve, reject) => {
+        db.insert(doc, function (err, newDoc) {
+            if (err){
+                resolve({"error": err, "data":null})
+            }else{
+                resolve({"error": null, "data":data})
+            }
+        });
+    })
 }
 
+var updateDirectoryWatch = function(query, data){
+
+    return new Promise((resolve, reject) => {
+
+        /* Update Database */
+        db.update({ "timeStamp": query.timeStamp }, { $set: data }, { multi: false }, function (err, numReplaced) {
+
+            /* Handle Database Error */
+            if (err) {
+                resolve({
+                    "error": err,
+                    "data": null
+                })
+            }
+
+            /* Handle No Record Updated Error */
+            if (numReplaced < 1) {
+
+                resolve({
+                    "error": { "error": "No Records Updates" },
+                    "data": null
+                })
+            }
+
+            /* Retrun Success Respone */
+            resolve({
+                "error": null,
+                "data": numReplaced
+            })
+
+        });
+    })
+
+}
 
 
 
 /* Test */
 //initDirectoryWatch(db)
 //createGlobalConstants(db)
-//updateGlobalConstants({"directory": "/WORKING"}, db)
+updateGlobalConstants({"frequency": 2}, db)
 
-//fetchDirectoryWatch({ "magicString": "janar", "directory": "/" }, db)
+//console.log(fetchDirectoryWatch({ "magicString": "janar", "directory": "/" }, db))
+var a = {
+    "directory": "/",
+    "magicString": "markZuck",
+    "lastScheduleRunTime": "",
+    "scheduleFrequency": "",
+    "timeStamp": "",
+    "addedFiles": [],
+    "deleteFiled": [],
+    "currentFiles": []
+}
+//createDirectoryWatch(a, db)
 
 module.exports = {
-    createDirectoryWatch,
+    db,
     fetchDirectoryWatch,
+    createDirectoryWatch,
     updateGlobalConstants,
-    createGlobalConstants
+    createGlobalConstants,
+    fetchGlobalConstants,
+    updateDirectoryWatch
 }
