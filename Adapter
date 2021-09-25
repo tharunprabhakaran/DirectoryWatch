@@ -1,0 +1,93 @@
+
+class ExternalPaymentServiceAdapter {
+
+    constructor(externalPaymentService) {
+
+        console.log("chargeCurrency - ", externalPaymentService.chargeCurrency)
+        console.log("pendingCharges - ", externalPaymentService.pendingCharges)
+
+        /* Assinging to the local objects */
+        this.pendingCharges = externalPaymentService.pendingCharges
+        this.chargeCurrency = externalPaymentService.chargeCurrency
+    }
+
+
+    createCharge({ customerId, amount, currency }) {
+
+        /* Generate Charge ID */
+        let chargeId = Date.now()
+
+        /* Push the Charge Object into the pendingCharge */
+        this.pendingCharges.push({
+            chargeId: chargeId,
+            customerId: customerId,
+            value: `${amount} ${currency}`
+        })
+
+        return chargeId
+    }
+
+    cancelCharge({ chargeId }) {
+
+        /* Filter out the changeObject */
+        let filteredCharges = this.pendingCharges.filter((chargeObject) => {
+            if (chargeObject.chargeId === chargeId) {
+                return false
+            }
+            return true
+        });
+
+        /* Update the pendingCharges */
+        externalPaymentService.pendingCharges = filteredCharges
+
+    }
+
+    updateCharge({ chargeId, amount, currency }) {
+
+        /* Update the chargeObject */
+        let newChargeID
+        let updatedCharges = this.pendingCharges.map((chargeObject) => {
+        
+            /* Return the Updated Charge Object */
+            if (chargeObject.chargeId === chargeId) {
+                newChargeID = Date.now
+
+                return {
+                    chargeId: newChargeID,
+                    customerId: chargeObject.customerId,
+                    value: `${amount} ${currency}`
+                }
+            }
+
+            /* Retrun the unmodified Object */
+            return chargeObject
+        })
+
+        /* Update the pendingCharges */
+        externalPaymentService.pendingCharges = updatedCharges
+
+        /* Return new chargeID */
+        retrun newChargeID
+    }
+
+    listChange() {
+
+        /* Update the chargeObject strucutre */
+        let modifiedCharges = this.pendingCharges.map((chargeObject) => {
+
+            /* Preprocess the Value field for amount and currency */
+            let value = chargeObject.value.split(' ')
+            return {
+                chargeId: chargeObject.chargeId,
+                customerId: chargeObject.customerId,
+                amount: value[0],
+                currency: value[1]
+
+            }
+        })
+
+        return modifiedCharges
+    }
+
+
+}
